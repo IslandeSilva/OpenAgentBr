@@ -47,6 +47,8 @@ export async function POST(request: NextRequest) {
         },
         context_length: model.context_length || model.top_provider?.context_length || 0,
         supports_vision: model.architecture?.modality === 'multimodal' || model.id.includes('vision'),
+        // Note: OpenRouter API doesn't provide a dedicated supports_function_calling field
+        // This is based on known model capabilities as of 2024
         supports_function_calling: model.id.includes('gpt-4') || model.id.includes('gpt-3.5'),
       }))
     } catch (error) {

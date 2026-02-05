@@ -73,6 +73,8 @@ CREATE POLICY IF NOT EXISTS "Users can delete their own files"
 
 -- Step 8: Create indexes for better performance
 CREATE INDEX IF NOT EXISTS available_models_user_id_idx ON available_models(user_id);
+-- Note: Using unique index to prevent duplicate models per user
+-- The validate endpoint handles updates by deleting old models first
 CREATE UNIQUE INDEX IF NOT EXISTS available_models_user_model_idx ON available_models(user_id, model_id);
 CREATE INDEX IF NOT EXISTS file_uploads_user_id_idx ON file_uploads(user_id);
 CREATE INDEX IF NOT EXISTS file_uploads_message_id_idx ON file_uploads(message_id);

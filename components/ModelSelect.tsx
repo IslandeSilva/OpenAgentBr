@@ -149,11 +149,11 @@ export default function ModelSelect({
                   <>
                     <span>•</span>
                     <span>
-                      {formatPrice(selectedModel.pricing.prompt)} prompt
+                      {formatPrice(selectedModel.pricing.prompt)}/1K prompt tokens
                     </span>
                     <span>•</span>
                     <span>
-                      {formatContext(selectedModel.context_length)} tokens
+                      {formatContext(selectedModel.context_length)} context
                     </span>
                   </>
                 )}
@@ -204,7 +204,7 @@ export default function ModelSelect({
                         <>
                           <span>•</span>
                           <span>
-                            {formatPrice(model.pricing.prompt)}/1K prompt
+                            {formatPrice(model.pricing.prompt)}/1K prompt tokens
                           </span>
                           <span>•</span>
                           <span>
