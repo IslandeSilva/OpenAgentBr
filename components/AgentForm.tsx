@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { CreateAgentInput } from '@/types/agent'
-import { OPENROUTER_MODELS } from '@/lib/openrouter'
+import ModelSelect from './ModelSelect'
 
 interface AgentFormProps {
   initialData?: CreateAgentInput
@@ -20,7 +20,7 @@ export default function AgentForm({
       name: '',
       description: '',
       system_prompt: '',
-      model: 'openai/gpt-3.5-turbo',
+      model: '',
       temperature: 0.7,
       max_tokens: 1000,
     }
@@ -90,19 +90,11 @@ export default function AgentForm({
         <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-1">
           Modelo *
         </label>
-        <select
-          id="model"
+        <ModelSelect
           value={formData.model}
-          onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          required
-        >
-          {OPENROUTER_MODELS.map((model) => (
-            <option key={model.id} value={model.id}>
-              {model.name}
-            </option>
-          ))}
-        </select>
+          onChange={(modelId) => setFormData({ ...formData, model: modelId })}
+          showPricing={true}
+        />
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">

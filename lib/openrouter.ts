@@ -26,6 +26,29 @@ export interface OpenRouterResponse {
   };
 }
 
+export interface OpenRouterModel {
+  id: string;
+  name: string;
+  description?: string;
+  pricing: {
+    prompt: string;
+    completion: string;
+    image?: string;
+  };
+  context_length: number;
+  architecture?: {
+    modality?: string;
+  };
+  top_provider?: {
+    context_length?: number;
+  };
+}
+
+export interface OpenRouterCredits {
+  usage: number;
+  limit: number | null;
+}
+
 export const OPENROUTER_MODELS = [
   { id: 'openai/gpt-4-turbo', name: 'GPT-4 Turbo' },
   { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
@@ -35,6 +58,52 @@ export const OPENROUTER_MODELS = [
   { id: 'meta-llama/llama-3-70b-instruct', name: 'Llama 3 70B' },
   { id: 'mistralai/mistral-medium', name: 'Mistral Medium' },
 ];
+
+export function isValidOpenRouterKey(key: string): boolean {
+  return key.startsWith('sk-or-v1-') && key.length > 20;
+}
+
+export async function validateApiKey(apiKey: string): Promise<{ valid: boolean; credits?: OpenRouterCredits; error?: string }> {
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/auth/key', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      return { valid: false, error: 'Invalid API key' };
+    }
+
+    const data = await response.json();
+    return {
+      valid: true,
+      credits: {
+        usage: data.data?.usage || 0,
+        limit: data.data?.limit || null,
+      },
+    };
+  } catch (error) {
+    return { valid: false, error: 'Failed to validate API key' };
+  }
+}
+
+export async function fetchAvailableModels(apiKey: string): Promise<OpenRouterModel[]> {
+  const response = await fetch('https://openrouter.ai/api/v1/models', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch models');
+  }
+
+  const data = await response.json();
+  return data.data || [];
+}
 
 export async function sendChatMessage(
   apiKey: string,

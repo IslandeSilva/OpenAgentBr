@@ -26,6 +26,12 @@ const config: Config = {
           800: '#075985',
           900: '#0c4a6e',
         },
+        select: {
+          bg: '#1e293b',
+          text: '#f1f5f9',
+          border: '#475569',
+          hover: '#334155',
+        },
       },
     },
   },

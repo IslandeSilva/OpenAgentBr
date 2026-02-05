@@ -41,6 +41,13 @@ export default function Navbar() {
               <Users className="h-4 w-4" />
               <span>Agentes</span>
             </Link>
+            <Link
+              href="/settings"
+              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg"
+            >
+              <Settings className="h-4 w-4" />
+              <span>Configurações</span>
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-lg"
