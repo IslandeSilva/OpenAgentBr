@@ -8,7 +8,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import Navbar from '@/components/Navbar'
 import ChatInterface from '@/components/ChatInterface'
 import { Agent } from '@/types/agent'
-import { ArrowLeft, Settings } from 'lucide-react'
+import { ArrowLeft, Edit } from 'lucide-react'
 
 export default function AgentChatPage() {
   const params = useParams()
@@ -151,6 +151,13 @@ export default function AgentChatPage() {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
+                <Link
+                  href={`/agents/${params.id}/edit`}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  <Edit className="h-4 w-4" />
+                  <span>Editar</span>
+                </Link>
                 <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
                   {agent.model}
                 </span>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Bot, LayoutDashboard, Users, LogOut, Settings } from 'lucide-react'
+import MobileMenu from './MobileMenu'
 
 export default function Navbar() {
   const router = useRouter()
@@ -25,8 +26,11 @@ export default function Navbar() {
             <span className="text-xl font-bold text-gray-900">OpenAgentBr</span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Mobile Menu */}
+          <MobileMenu />
+
+          {/* Navigation Links - Desktop */}
+          <div className="hidden lg:flex items-center space-x-4">
             <Link
               href="/dashboard"
               className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg"
