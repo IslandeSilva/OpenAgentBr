@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -16,24 +16,7 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchAgents()
-  }, [])
-
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = agents.filter(
-        (agent) =>
-          agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          agent.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      setFilteredAgents(filtered)
-    } else {
-      setFilteredAgents(agents)
-    }
-  }, [searchTerm, agents])
-
-  const fetchAgents = async () => {
+  const fetchAgents = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -48,7 +31,24 @@ export default function AgentsPage() {
       setFilteredAgents(data)
     }
     setLoading(false)
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    fetchAgents()
+  }, [fetchAgents])
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = agents.filter(
+        (agent) =>
+          agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          agent.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      setFilteredAgents(filtered)
+    } else {
+      setFilteredAgents(agents)
+    }
+  }, [searchTerm, agents])
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja deletar este agente?')) return

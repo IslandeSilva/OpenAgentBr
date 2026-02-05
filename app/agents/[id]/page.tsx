@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -17,11 +17,7 @@ export default function AgentChatPage() {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchAgent()
-  }, [params.id])
-
-  const fetchAgent = async () => {
+  const fetchAgent = useCallback(async () => {
     const { data, error } = await supabase
       .from('agents')
       .select('*')
@@ -34,7 +30,11 @@ export default function AgentChatPage() {
       router.push('/agents')
     }
     setLoading(false)
-  }
+  }, [params.id, supabase, router])
+
+  useEffect(() => {
+    fetchAgent()
+  }, [fetchAgent])
 
   const handleSendMessage = async (message: string, files?: any[]): Promise<string> => {
     if (!agent) throw new Error('Agent not found')
