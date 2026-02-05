@@ -31,3 +31,41 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Form Elements - Better Visibility */
+select {
+  @apply bg-slate-800 text-slate-100 border-slate-600;
+  @apply focus:border-blue-500 focus:ring-2 focus:ring-blue-500;
+  @apply px-4 py-2 rounded-lg;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.5em 1.5em;
+}
+
+select option {
+  @apply bg-slate-800 text-slate-100;
+  padding: 8px;
+}
+
+/* Input and Textarea Improvements */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea {
+  @apply bg-slate-50 text-slate-900 border-slate-300;
+  @apply placeholder:text-slate-400;
+}
+
+/* Dark mode support for form elements */
+@media (prefers-color-scheme: dark) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    @apply bg-slate-800 text-slate-100 border-slate-600;
+  }
+}
