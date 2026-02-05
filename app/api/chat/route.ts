@@ -46,12 +46,13 @@ export async function POST(request: NextRequest) {
 
     if (!currentConversationId) {
       // Create new conversation
+      const titleText = message.length > 50 ? message.substring(0, 50) + '...' : message
       const { data: newConv, error: convError } = await supabase
         .from('conversations')
         .insert({
           user_id: user.id,
           agent_id: agentId,
-          title: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
+          title: titleText,
         })
         .select()
         .single()

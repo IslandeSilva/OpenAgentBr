@@ -269,7 +269,7 @@ CREATE TABLE available_models (
 
 ```json
 {
-  "date-fns": "^latest"  // Para formatação de datas
+  "date-fns": "^3.6.0"  // For date formatting
 }
 ```
 

@@ -49,7 +49,7 @@ export default function ConversationSidebar({
     } finally {
       setLoading(false)
     }
-  }, [agentId, supabase])
+  }, [agentId])
 
   useEffect(() => {
     fetchConversations()
