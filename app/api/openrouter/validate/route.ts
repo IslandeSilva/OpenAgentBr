@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { validateApiKey, fetchAvailableModels, isValidOpenRouterKey } from '@/lib/openrouter'
+import { validateApiKey, fetchAvailableModels, isValidOpenRouterKey, OpenRouterModel } from '@/lib/openrouter'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,10 +34,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch available models
-    let models = []
+    let models: Array<{
+      model_id: string
+      name: string
+      provider: string
+      pricing: { prompt: number; completion: number }
+      context_length: number
+      supports_vision: boolean
+      supports_function_calling: boolean
+    }> = []
     try {
-      const allModels = await fetchAvailableModels(apiKey)
-      models = allModels.map((model: any) => ({
+      const allModels: OpenRouterModel[] = await fetchAvailableModels(apiKey)
+      models = allModels.map((model: OpenRouterModel) => ({
         model_id: model.id,
         name: model.name || model.id,
         provider: model.id.split('/')[0] || 'unknown',

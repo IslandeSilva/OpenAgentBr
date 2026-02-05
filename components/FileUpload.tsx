@@ -28,7 +28,7 @@ export default function FileUpload({
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleUpload = async (fileList: FileList) => {
+  const handleUpload = useCallback(async (fileList: FileList) => {
     setError(null)
 
     if (files.length + fileList.length > maxFiles) {
@@ -68,7 +68,7 @@ export default function FileUpload({
     } finally {
       setUploading(false)
     }
-  }
+  }, [files, maxFiles, onUpload])
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -82,7 +82,7 @@ export default function FileUpload({
         handleUpload(e.dataTransfer.files)
       }
     },
-    [disabled, uploading, files]
+    [disabled, uploading, handleUpload]
   )
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {

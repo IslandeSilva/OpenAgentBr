@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -13,11 +13,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchAgents()
-  }, [])
-
-  const fetchAgents = async () => {
+  const fetchAgents = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -32,7 +28,11 @@ export default function DashboardPage() {
       setAgents(data)
     }
     setLoading(false)
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    fetchAgents()
+  }, [fetchAgents])
 
   return (
     <ProtectedRoute>
