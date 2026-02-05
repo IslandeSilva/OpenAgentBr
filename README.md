@@ -18,8 +18,12 @@
 - 🔐 **Autenticação Completa** - Login/Signup com Supabase
 - 🤖 **Agentes Personalizados** - Crie agentes com system prompts customizáveis
 - 💬 **Interface de Chat** - Converse em tempo real com seus agentes
-- 📊 **Dashboard de Uso** - Acompanhe métricas e custos do OpenRouter
-- 🎨 **UI Moderna** - Design responsivo com Tailwind CSS
+- 🔧 **Configurações de API** - Página dedicada para gerenciar API Key do OpenRouter
+- 🤖 **Modelos Dinâmicos** - Busca automática de modelos disponíveis do OpenRouter
+- 📎 **Upload de Arquivos** - Suporte para imagens, PDFs e documentos com drag & drop
+- 👁️ **Modelos Vision** - Envie imagens para modelos que suportam visão
+- 📊 **Dashboard de Uso** - Acompanhe métricas, créditos e custos do OpenRouter
+- 🎨 **UI Moderna** - Design responsivo com Tailwind CSS e contraste aprimorado
 - 🔒 **Seguro** - Row Level Security (RLS) no Supabase
 - 🚀 **Deploy Fácil** - Pronto para Vercel
 
@@ -69,7 +73,19 @@ yarn install
 
 1. No dashboard do Supabase, vá em **SQL Editor**
 2. Copie e execute o conteúdo do arquivo [`supabase/schema.sql`](supabase/schema.sql) OU use o [guia completo](SETUP_DATABASE.md)
-3. Isso criará as tabelas: `agents`, `user_settings`, `chat_messages`
+3. Isso criará as tabelas: `agents`, `user_settings`, `chat_messages`, `available_models`, `file_uploads`
+
+**Se você já tem o banco configurado**, execute o arquivo [`supabase/migration.sql`](supabase/migration.sql) para adicionar as novas tabelas.
+
+#### 3.3. Configure o Storage para uploads
+
+1. No dashboard do Supabase, vá em **Storage**
+2. Clique em "Create a new bucket"
+3. Nome do bucket: `chat-files`
+4. Marque como **Public**
+5. Configure as políticas de acesso:
+   - Allowed MIME types: `image/*`, `application/pdf`, `text/*`
+   - Max file size: 10MB
 
 ### 4. Configure as variáveis de ambiente
 
@@ -115,29 +131,17 @@ Acesse [http://localhost:3000](http://localhost:3000) 🎉
 
 ### 2. Configurar API Key do OpenRouter
 
-⚠️ **Importante**: Por segurança, a API key do OpenRouter é armazenada no banco de dados do Supabase, não em variáveis de ambiente.
-
-Para adicionar sua key:
+Agora com a **página de configurações dedicada**! 🎉
 
 1. Faça login na aplicação
-2. Vá até o Dashboard
-3. Configure sua API key do OpenRouter nas configurações do usuário
-   - Você pode fazer isso criando um registro na tabela `user_settings`
-   - Ou adicionando uma página de configurações (futuro)
-
-Por enquanto, você pode adicionar manualmente via SQL Editor do Supabase:
-
-```sql
-INSERT INTO user_settings (user_id, openrouter_api_key)
-VALUES ('seu-user-id-aqui', 'sk-or-v1-sua-key-aqui')
-ON CONFLICT (user_id) DO UPDATE SET openrouter_api_key = EXCLUDED.openrouter_api_key;
-```
-
-Para pegar seu `user_id`, execute:
-
-```sql
-SELECT id, email FROM auth.users;
-```
+2. Clique em **"Configurações"** no menu de navegação
+3. Cole sua API Key do OpenRouter (formato: `sk-or-v1-...`)
+4. Clique em **"Validar e Salvar API Key"**
+5. A aplicação irá:
+   - Validar sua key
+   - Buscar seus créditos disponíveis
+   - Carregar automaticamente todos os modelos disponíveis do OpenRouter
+6. Pronto! Agora você pode criar agentes com qualquer modelo disponível
 
 ### 3. Criar um agente
 
@@ -146,7 +150,9 @@ SELECT id, email FROM auth.users;
    - **Nome**: Ex: "Assistente de Vendas"
    - **Descrição**: Breve descrição do propósito
    - **System Prompt**: Define o comportamento do agente
-   - **Modelo**: Escolha entre GPT-4, Claude, etc
+   - **Modelo**: Escolha entre **todos os modelos disponíveis** do OpenRouter
+     - Use a busca para encontrar modelos específicos
+     - Veja preços, contexto e recursos (vision, function calling)
    - **Temperatura**: 0 = Determinístico, 2 = Criativo
    - **Max Tokens**: Limite de tokens na resposta
 3. Clique em "Criar Agente"
@@ -155,7 +161,10 @@ SELECT id, email FROM auth.users;
 
 1. Na lista de agentes, clique em "Chat"
 2. Digite suas mensagens e converse!
-3. O histórico é salvo automaticamente
+3. **Novo**: Clique no ícone de clipe 📎 para anexar arquivos
+   - Arraste e solte imagens, PDFs ou documentos
+   - Modelos vision (como GPT-4V, Claude 3) podem ver as imagens
+4. O histórico é salvo automaticamente
 
 ## ☁️ Deploy em Produção
 
@@ -206,17 +215,25 @@ OpenAgentBr/
 │   ├── page.tsx             # Landing page
 │   ├── login/               # Página de login
 │   ├── dashboard/           # Dashboard
+│   ├── settings/            # ✨ NOVO: Configurações de API Key
 │   ├── agents/              # Gerenciamento de agentes
 │   │   ├── page.tsx         # Lista de agentes
 │   │   ├── create/          # Criar agente
 │   │   └── [id]/            # Chat com agente
 │   └── api/                 # API Routes
 │       ├── chat/            # Endpoint de chat
-│       └── usage/           # Endpoint de métricas
+│       ├── usage/           # Endpoint de métricas
+│       ├── upload/          # ✨ NOVO: Upload de arquivos
+│       └── openrouter/      # ✨ NOVO: Validação e modelos
+│           ├── validate/    # Validar API key
+│           └── models/      # Listar modelos
 ├── components/              # Componentes reutilizáveis
 │   ├── AgentCard.tsx
 │   ├── AgentForm.tsx
 │   ├── ChatInterface.tsx
+│   ├── FileUpload.tsx       # ✨ NOVO: Upload com drag & drop
+│   ├── FilePreview.tsx      # ✨ NOVO: Preview de arquivos
+│   ├── ModelSelect.tsx      # ✨ NOVO: Seletor dinâmico de modelos
 │   ├── Navbar.tsx
 │   ├── ProtectedRoute.tsx
 │   └── UsageMetrics.tsx
@@ -224,13 +241,14 @@ OpenAgentBr/
 │   ├── supabase/
 │   │   ├── client.ts        # Cliente Supabase (browser)
 │   │   └── server.ts        # Cliente Supabase (server)
-│   ├── openrouter.ts        # Integração OpenRouter
+│   ├── openrouter.ts        # Integração OpenRouter (expandido)
 │   └── utils.ts             # Funções utilitárias
 ├── types/                   # TypeScript types
 │   ├── agent.ts
 │   └── usage.ts
 ├── supabase/
-│   └── schema.sql           # Schema do banco de dados
+│   ├── schema.sql           # Schema completo do banco
+│   └── migration.sql        # ✨ NOVO: Migration para bancos existentes
 └── public/                  # Arquivos estáticos
 ```
 
@@ -255,12 +273,15 @@ Armazena os agentes criados pelos usuários.
 
 ### Tabela: `user_settings`
 
-Armazena configurações do usuário, incluindo a API key do OpenRouter.
+Armazena configurações do usuário, incluindo a API key do OpenRouter e créditos.
 
 ```sql
 - id (uuid, PK)
 - user_id (uuid, FK -> auth.users, unique)
 - openrouter_api_key (text)
+- credits_total (decimal) ✨ NOVO
+- credits_used (decimal) ✨ NOVO
+- last_sync (timestamp) ✨ NOVO
 - created_at (timestamp)
 - updated_at (timestamp)
 ```
@@ -278,13 +299,57 @@ Armazena o histórico de mensagens dos chats.
 - created_at (timestamp)
 ```
 
+### Tabela: `available_models` ✨ NOVO
+
+Armazena modelos disponíveis do OpenRouter para cada usuário.
+
+```sql
+- id (uuid, PK)
+- user_id (uuid, FK -> auth.users)
+- model_id (text)
+- name (text)
+- provider (text)
+- pricing (jsonb)
+- context_length (integer)
+- supports_vision (boolean)
+- supports_function_calling (boolean)
+- created_at (timestamp)
+- updated_at (timestamp)
+```
+
+### Tabela: `file_uploads` ✨ NOVO
+
+Armazena metadados de arquivos enviados.
+
+```sql
+- id (uuid, PK)
+- user_id (uuid, FK -> auth.users)
+- message_id (uuid, FK -> chat_messages, nullable)
+- file_name (text)
+- file_type (text)
+- file_size (integer)
+- storage_path (text)
+- public_url (text)
+- created_at (timestamp)
+```
+
+### Storage Bucket: `chat-files` ✨ NOVO
+
+Armazena os arquivos enviados (imagens, PDFs, documentos).
+
 ## 🎨 Modelos Disponíveis
 
-- **OpenAI**: GPT-4 Turbo, GPT-3.5 Turbo
-- **Anthropic**: Claude 3 Opus, Claude 3 Sonnet
-- **Google**: Gemini Pro
-- **Meta**: Llama 3 70B
-- **Mistral**: Mistral Medium
+A lista de modelos é **carregada dinamicamente** do OpenRouter! Alguns exemplos incluem:
+
+- **OpenAI**: GPT-4 Turbo, GPT-4 Vision, GPT-3.5 Turbo
+- **Anthropic**: Claude 3 Opus, Claude 3 Sonnet, Claude 3 Haiku
+- **Google**: Gemini Pro, Gemini Pro Vision
+- **Meta**: Llama 3 70B, Llama 3 8B
+- **Mistral**: Mistral Large, Mistral Medium, Mixtral
+- **Cohere**: Command R+, Command R
+- E muitos outros!
+
+**Total**: Mais de 200 modelos disponíveis através do OpenRouter
 
 ## 🔒 Segurança
 
@@ -306,16 +371,21 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 
 ## 📝 Roadmap
 
-- [ ] Página de configurações para gerenciar API key
+- [x] Página de configurações para gerenciar API key ✅
+- [x] Busca dinâmica de modelos do OpenRouter ✅
+- [x] Upload de arquivos (imagens, PDFs, documentos) ✅
+- [x] Suporte a modelos vision ✅
+- [x] UI aprimorada com melhor contraste ✅
 - [ ] Edição de agentes
 - [ ] Export/Import de agentes
 - [ ] Gráficos de uso com recharts
 - [ ] Streaming de respostas
 - [ ] Dark mode
-- [ ] Suporte a imagens (vision models)
 - [ ] Compartilhamento de agentes
 - [ ] Rate limiting
 - [ ] Testes automatizados
+- [ ] Suporte a function calling
+- [ ] Templates de agentes pré-configurados
 
 ## 📄 Licença
 
@@ -333,6 +403,16 @@ Tem dúvidas ou problemas?
 
 - 📧 Abra uma [issue](https://github.com/IslandeSilva/OpenAgentBr/issues)
 - 💬 Entre em contato via GitHub
+- 📖 Consulte a [Documentação da API](API_DOCUMENTATION.md)
+
+## 📚 Documentação Adicional
+
+- [API Documentation](API_DOCUMENTATION.md) - Documentação completa dos endpoints
+- [Schema SQL Completo](supabase/schema.sql) - Schema do banco de dados
+- [Migration SQL](supabase/migration.sql) - Atualização de bancos existentes
+- [Setup Database](SETUP_DATABASE.md) - Guia de configuração do banco
+- [Deploy Guide](DEPLOY.md) - Guia completo de deploy
+- [Deploy Rápido](DEPLOY_RAPIDO.md) - Deploy em 15 minutos
 
 ## 🙏 Agradecimentos
 
