@@ -314,7 +314,7 @@ export default function SettingsPage() {
                   <Database className="h-12 w-12 mx-auto mb-3 text-gray-400" />
                   <p>Nenhum modelo carregado ainda.</p>
                   <p className="text-sm mt-1">
-                    Configure sua API Key e clique em "Validar e Salvar" para carregar os modelos.
+                    Configure sua API Key e clique em &quot;Validar e Salvar&quot; para carregar os modelos.
                   </p>
                 </div>
               )}

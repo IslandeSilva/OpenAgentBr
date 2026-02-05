@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch available models
-    let models = []
+    let models: any[] = []
     try {
       const allModels = await fetchAvailableModels(apiKey)
       models = allModels.map((model: any) => ({
