@@ -7,6 +7,10 @@
 
 **OpenAgentBr** é uma plataforma brasileira completa para criar, gerenciar e interagir com agentes de IA personalizados usando a API do OpenRouter. Com autenticação segura via Supabase e interface moderna em Next.js.
 
+## 🚀 Início Rápido
+
+> 📌 **Configurar Banco de Dados?** → Veja o [**Guia de Setup Completo**](SETUP_DATABASE.md) com schema SQL pronto para copiar!
+
 ## ✨ Features Principais
 
 - 🔐 **Autenticação Completa** - Login/Signup com Supabase
@@ -51,6 +55,8 @@ yarn install
 
 ### 3. Configure o Supabase
 
+> 📌 **GUIA COMPLETO**: Veja o [SETUP_DATABASE.md](SETUP_DATABASE.md) para instruções detalhadas passo-a-passo com o schema completo pronto para copiar!
+
 #### 3.1. Crie um projeto no Supabase
 
 1. Acesse [supabase.com](https://supabase.com)
@@ -60,7 +66,7 @@ yarn install
 #### 3.2. Execute o schema SQL
 
 1. No dashboard do Supabase, vá em **SQL Editor**
-2. Copie e execute o conteúdo do arquivo `supabase/schema.sql`
+2. Copie e execute o conteúdo do arquivo [`supabase/schema.sql`](supabase/schema.sql) OU use o [guia completo](SETUP_DATABASE.md)
 3. Isso criará as tabelas: `agents`, `user_settings`, `chat_messages`
 
 ### 4. Configure as variáveis de ambiente
