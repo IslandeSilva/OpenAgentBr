@@ -1,14 +1,14 @@
 'use client'
 
 import { useTheme } from '@/lib/contexts/ThemeContext'
-import { Sun, Moon, Monitor } from 'lucide-react'
+import { Sun, Moon, Monitor, LucideIcon } from 'lucide-react'
 
 type Theme = 'light' | 'dark' | 'system'
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
-  const themes: Array<{ value: Theme; icon: any; label: string }> = [
+  const themes: Array<{ value: Theme; icon: LucideIcon; label: string }> = [
     { value: 'light', icon: Sun, label: 'Claro' },
     { value: 'dark', icon: Moon, label: 'Escuro' },
     { value: 'system', icon: Monitor, label: 'Sistema' },

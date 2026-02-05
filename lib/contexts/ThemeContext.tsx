@@ -43,7 +43,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     loadTheme()
-  }, [supabase])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const root = window.document.documentElement
