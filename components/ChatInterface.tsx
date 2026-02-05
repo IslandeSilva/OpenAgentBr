@@ -1,17 +1,26 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, User } from 'lucide-react'
+import { Send, Bot, User, Paperclip, X } from 'lucide-react'
+import FileUpload from './FileUpload'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
 }
 
+interface UploadedFile {
+  id: string
+  fileName: string
+  fileType: string
+  fileSize: number
+  publicUrl: string
+}
+
 interface ChatInterfaceProps {
   agentId: string
   agentName: string
-  onSendMessage: (message: string) => Promise<string>
+  onSendMessage: (message: string, files?: UploadedFile[]) => Promise<string>
 }
 
 export default function ChatInterface({
@@ -22,6 +31,8 @@ export default function ChatInterface({
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showFileUpload, setShowFileUpload] = useState(false)
+  const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -34,15 +45,20 @@ export default function ChatInterface({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim() || loading) return
+    if ((!input.trim() && attachedFiles.length === 0) || loading) return
 
     const userMessage = input.trim()
+    const filesToSend = [...attachedFiles]
+    
     setInput('')
-    setMessages((prev) => [...prev, { role: 'user', content: userMessage }])
+    setAttachedFiles([])
+    setShowFileUpload(false)
+    
+    setMessages((prev) => [...prev, { role: 'user', content: userMessage || '[Arquivo(s) anexado(s)]' }])
     setLoading(true)
 
     try {
-      const response = await onSendMessage(userMessage)
+      const response = await onSendMessage(userMessage, filesToSend)
       setMessages((prev) => [...prev, { role: 'assistant', content: response }])
     } catch (error) {
       console.error('Error sending message:', error)
@@ -118,8 +134,49 @@ export default function ChatInterface({
 
       {/* Input */}
       <div className="border-t bg-white p-4">
+        {showFileUpload && (
+          <div className="max-w-4xl mx-auto mb-4">
+            <FileUpload
+              onUpload={setAttachedFiles}
+              maxFiles={5}
+              disabled={loading}
+            />
+          </div>
+        )}
+
+        {attachedFiles.length > 0 && !showFileUpload && (
+          <div className="max-w-4xl mx-auto mb-3">
+            <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <Paperclip className="h-4 w-4 text-blue-600" />
+                <span className="text-sm text-blue-900">
+                  {attachedFiles.length} arquivo(s) anexado(s)
+                </span>
+              </div>
+              <button
+                onClick={() => setAttachedFiles([])}
+                className="text-blue-600 hover:text-blue-800"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-          <div className="flex space-x-4">
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              onClick={() => setShowFileUpload(!showFileUpload)}
+              className={`px-3 py-2 rounded-lg transition-colors ${
+                showFileUpload || attachedFiles.length > 0
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              disabled={loading}
+            >
+              <Paperclip className="h-5 w-5" />
+            </button>
             <input
               type="text"
               value={input}
@@ -130,7 +187,7 @@ export default function ChatInterface({
             />
             <button
               type="submit"
-              disabled={loading || !input.trim()}
+              disabled={loading || (!input.trim() && attachedFiles.length === 0)}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="h-5 w-5" />

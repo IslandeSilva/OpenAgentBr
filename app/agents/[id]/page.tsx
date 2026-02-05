@@ -36,19 +36,34 @@ export default function AgentChatPage() {
     setLoading(false)
   }
 
-  const handleSendMessage = async (message: string): Promise<string> => {
+  const handleSendMessage = async (message: string, files?: any[]): Promise<string> => {
     if (!agent) throw new Error('Agent not found')
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
 
     // Save user message
-    await supabase.from('chat_messages').insert({
+    const { data: userMsg } = await supabase.from('chat_messages').insert({
       user_id: user.id,
       agent_id: agent.id,
       role: 'user',
-      content: message,
-    })
+      content: message || '[Arquivo(s) anexado(s)]',
+    }).select().single()
+
+    // If files are attached, link them to the message
+    if (files && files.length > 0 && userMsg) {
+      const fileUpdates = files.map((file: any) => ({
+        id: file.id,
+        message_id: userMsg.id,
+      }))
+      
+      for (const fileUpdate of fileUpdates) {
+        await supabase
+          .from('file_uploads')
+          .update({ message_id: fileUpdate.message_id })
+          .eq('id', fileUpdate.id)
+      }
+    }
 
     // Get user's OpenRouter API key
     const { data: settings } = await supabase
@@ -61,6 +76,15 @@ export default function AgentChatPage() {
       throw new Error('Configure sua API key do OpenRouter nas configurações')
     }
 
+    // Prepare message content with files for vision models
+    let messageContent = message
+    if (files && files.length > 0) {
+      const imageFiles = files.filter((f: any) => f.fileType.startsWith('image/'))
+      if (imageFiles.length > 0) {
+        messageContent = message + '\n\n[Imagens anexadas: ' + imageFiles.map((f: any) => f.publicUrl).join(', ') + ']'
+      }
+    }
+
     // Call API
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -68,7 +92,7 @@ export default function AgentChatPage() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message,
+        message: messageContent,
         agentId: agent.id,
         apiKey: settings.openrouter_api_key,
       }),
