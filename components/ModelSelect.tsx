@@ -137,10 +137,10 @@ export default function ModelSelect({
               <div className="flex items-center space-x-2">
                 <h4 className="font-medium text-blue-900">{selectedModel.name}</h4>
                 {selectedModel.supports_vision && (
-                  <Eye className="h-4 w-4 text-blue-600" title="Suporta visão" />
+                  <Eye className="h-4 w-4 text-blue-600" />
                 )}
                 {selectedModel.supports_function_calling && (
-                  <Zap className="h-4 w-4 text-blue-600" title="Suporta function calling" />
+                  <Zap className="h-4 w-4 text-blue-600" />
                 )}
               </div>
               <div className="flex items-center space-x-3 mt-1 text-xs text-blue-700">
@@ -192,10 +192,10 @@ export default function ModelSelect({
                         {model.name}
                       </h4>
                       {model.supports_vision && (
-                        <Eye className="h-4 w-4 text-gray-600 flex-shrink-0" title="Suporta visão" />
+                        <Eye className="h-4 w-4 text-gray-600 flex-shrink-0" />
                       )}
                       {model.supports_function_calling && (
-                        <Zap className="h-4 w-4 text-gray-600 flex-shrink-0" title="Suporta function calling" />
+                        <Zap className="h-4 w-4 text-gray-600 flex-shrink-0" />
                       )}
                     </div>
                     <div className="flex items-center space-x-2 mt-1 text-xs text-gray-600">
