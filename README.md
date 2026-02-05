@@ -9,7 +9,9 @@
 
 ## 🚀 Início Rápido
 
-> 📌 **Configurar Banco de Dados?** → Veja o [**Guia de Setup Completo**](SETUP_DATABASE.md) com schema SQL pronto para copiar!
+> 📌 **Configurar Banco de Dados?** → [**Setup Database**](SETUP_DATABASE.md) | [**Schema SQL**](SCHEMA.md)
+> 
+> 🚀 **Fazer Deploy?** → [**Deploy Completo**](DEPLOY.md) | [**Deploy Rápido (15min)**](DEPLOY_RAPIDO.md)
 
 ## ✨ Features Principais
 
@@ -155,30 +157,45 @@ SELECT id, email FROM auth.users;
 2. Digite suas mensagens e converse!
 3. O histórico é salvo automaticamente
 
-## ☁️ Deploy na Vercel
+## ☁️ Deploy em Produção
 
-### 1. Conecte seu repositório
+### 🚀 Guias Completos de Deploy
 
-1. Acesse [vercel.com](https://vercel.com)
-2. Clique em "New Project"
-3. Importe o repositório do GitHub
-4. Configure as variáveis de ambiente (mesmas do `.env.local`)
+Temos 2 guias para você escolher:
 
-### 2. Configure as variáveis de ambiente
+1. **[DEPLOY.md](DEPLOY.md)** - Guia Completo e Detalhado
+   - Passo-a-passo com explicações
+   - Troubleshooting completo
+   - Configurações avançadas
+   - ~30 minutos
 
-No painel da Vercel, adicione:
+2. **[DEPLOY_RAPIDO.md](DEPLOY_RAPIDO.md)** - Deploy Expresso
+   - Apenas comandos essenciais
+   - Direto ao ponto
+   - ~15 minutos
 
+### ⚡ Resumo Ultra-Rápido
+
+```bash
+# 1. Supabase
+- Criar projeto em supabase.com
+- Executar schema do SCHEMA.md
+- Copiar URL + API Key
+
+# 2. Vercel  
+- Import do GitHub em vercel.com
+- Adicionar env vars (Supabase URL + Key)
+- Deploy!
+
+# 3. OpenRouter
+- Criar conta em openrouter.ai
+- Adicionar $10 de créditos
+- Configurar key via SQL no app
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_anon_key_aqui
-NEXT_PUBLIC_APP_URL=https://seu-app.vercel.app
-```
 
-### 3. Deploy
+Veja os guias completos acima para instruções detalhadas!
 
-Clique em "Deploy" e aguarde!
-
-A cada push no branch `main`, a Vercel fará deploy automaticamente.
+---
 
 ## 🗂️ Estrutura do Projeto
 
